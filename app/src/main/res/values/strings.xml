@@ -8,4 +8,6 @@
     <string name="enter_task_name">Enter task name</string>
     <string name="no_task_message">You don\'t have any task</string>
     <string name="todo">TODO</string>
+    <string name="task_name">Task Name</string>
+    <string name="task_status">Status: InComplete</string>
 </resources>
