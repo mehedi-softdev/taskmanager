@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:text="@string/task_name"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/task_due_date"
@@ -35,6 +36,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/task_name"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/task_due_date"
             android:fontFamily="sans-serif"
