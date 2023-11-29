@@ -23,7 +23,7 @@
         android:layout_marginHorizontal="25dp"
         android:layout_marginTop="25dp"
         android:fontFamily="sans-serif"
-        android:hint="Enter task name"
+        android:hint="@string/enter_task_name"
         android:textSize="16sp" />
 
     <EditText
@@ -50,4 +50,17 @@
         android:fontFamily="sans-serif"
         android:text="@string/task_date_pick"
         android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_save_task"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn_date_time_picker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/add_task"
+        android:textSize="16sp" />
+
+
 </RelativeLayout>

@@ -5,4 +5,7 @@
     <string name="add_task">Add Task</string>
     <string name="task_desc">Enter Task Description</string>
     <string name="task_date_pick">Pick task date</string>
+    <string name="enter_task_name">Enter task name</string>
+    <string name="no_task_message">You don\'t have any task</string>
+    <string name="todo">TODO</string>
 </resources>
