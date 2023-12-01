@@ -9,6 +9,7 @@ import com.innovatenestlabs.taskmanager.models.Task
 
 @Dao
 interface TaskDao {
+
     @Query("SELECT * FROM tasks")
     suspend fun getTaskList(): List<Task>
 
@@ -24,4 +25,5 @@ interface TaskDao {
 
     @Delete
     suspend fun deleteTask(task: Task)
+
 }

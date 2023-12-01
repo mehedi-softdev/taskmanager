@@ -15,11 +15,24 @@
         android:text="@string/add_task"
         android:textSize="16sp" />
 
+
+    <TextView
+        android:id="@+id/tv_error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/tv_label"
+        android:fontFamily="sans-serif"
+        android:layout_marginHorizontal="25dp"
+        android:visibility="gone"
+        android:textSize="16sp" />
+
     <EditText
         android:id="@+id/et_task_name"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@+id/tv_label"
+        android:layout_below="@+id/tv_error_message"
         android:layout_marginHorizontal="25dp"
         android:layout_marginTop="25dp"
         android:fontFamily="sans-serif"

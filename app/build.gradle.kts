@@ -52,15 +52,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // swipe refresh
-    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-
-    // splash screen
-    implementation ("androidx.core:core-splashscreen:1.0.1")
 
     // hilt and view models dependencies
     implementation("com.google.dagger:hilt-android:2.44")

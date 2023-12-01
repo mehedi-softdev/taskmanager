@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DisplayFragment : Fragment() {
     private var _binding: FragmentDisplayBinding? = null
     private val binding get() = _binding!!

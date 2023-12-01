@@ -2,20 +2,28 @@ package com.innovatenestlabs.taskmanager
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.innovatenestlabs.taskmanager.databinding.FragmentUpdateTaskBinding
+import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.AppConverters
+import com.innovatenestlabs.taskmanager.viewmodels.TaskViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
+import java.util.Date
 
-
+@AndroidEntryPoint
 class UpdateTaskFragment : Fragment() {
     private var _binding: FragmentUpdateTaskBinding? = null
     private val binding get() = _binding!!
     private lateinit var selectDateTime: Calendar
+
+    private val taskViewModel by viewModels<TaskViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +46,17 @@ class UpdateTaskFragment : Fragment() {
     private fun bindingEvents() {
         binding.btnDateTimePicker.setOnClickListener {
             btnDateTimePickerEvent()
+        }
+        binding.btnSaveTask.setOnClickListener {
+            val validate = validateUserInput()
+            if (validate.first) {
+                taskViewModel.insertTask(getTask())
+            } else {
+                binding.tvErrorMessage.visibility = View.VISIBLE
+                binding.tvErrorMessage.setTextColor(Color.RED)
+                // show the error message
+                binding.tvErrorMessage.text = validate.second
+            }
         }
     }
 
@@ -69,7 +88,6 @@ class UpdateTaskFragment : Fragment() {
                 selectDateTime.set(Calendar.MINUTE, minute)
                 // set selected date time to button text as string
                 binding.btnDateTimePicker.text = AppConverters.getDateTime(selectDateTime.time)
-                // later selectDateTime.time will be used for saving date object
 
             },
             currentHour,
@@ -78,6 +96,21 @@ class UpdateTaskFragment : Fragment() {
         )
         // showing the time picker dialogue
         timePickerDialog.show()
+    }
+
+    // fun for validate user input
+    fun validateUserInput(): Pair<Boolean, String> {
+        val task = getTask()
+        return taskViewModel.validateTaskInput(task)
+    }
+
+    private fun getTask(): Task {
+        val task = Task(
+            0, binding.etTaskName.text.toString(),
+            binding.etTaskDesc.text.toString(),
+            selectDateTime.time, false
+        )
+        return task
     }
 
     override fun onDestroyView() {

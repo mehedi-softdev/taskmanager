@@ -9,6 +9,7 @@ data class Task(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     var name: String,
+    var desc: String,
     var date: Date,
     var isComplete: Boolean
 )
