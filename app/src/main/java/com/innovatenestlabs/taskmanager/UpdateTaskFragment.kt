@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.innovatenestlabs.taskmanager.databinding.FragmentUpdateTaskBinding
+import com.innovatenestlabs.taskmanager.utils.AppConverters
 import java.util.Calendar
 
 
@@ -66,7 +67,10 @@ class UpdateTaskFragment : Fragment() {
             { _, hour, minute ->
                 selectDateTime.set(Calendar.HOUR_OF_DAY, hour)
                 selectDateTime.set(Calendar.MINUTE, minute)
+                // set selected date time to button text as string
+                binding.btnDateTimePicker.text = AppConverters.getDateTime(selectDateTime.time)
                 // later selectDateTime.time will be used for saving date object
+
             },
             currentHour,
             currentMinute,
