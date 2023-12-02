@@ -71,7 +71,6 @@ class DisplayFragment : Fragment() {
                         if (tasks.isNotEmpty()) {
                             binding.rvTaskList.visibility = View.VISIBLE
                             binding.tvLabel.text = getString(R.string.your_tasks)
-                            taskList.clear()
                             taskList.addAll(tasks)
                         }
                     }
@@ -81,6 +80,17 @@ class DisplayFragment : Fragment() {
                 is Response.Error -> {
 
                 }
+            }
+        })
+        displayTasksViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
+            when(it) {
+                is Response.Loading -> {}
+                is Response.Success -> {
+                    taskList.clear()
+                    // just call the load task method
+                    displayTasksViewModel.loadTaskList()
+                }
+                is Response.Error -> {}
             }
         })
     }
@@ -93,6 +103,8 @@ class DisplayFragment : Fragment() {
                 bundle
             )
         }
+        // check box event
+
     }
 
     private fun setupRecyclerView() {
@@ -113,6 +125,10 @@ class DisplayFragment : Fragment() {
                     R.id.action_displayFragment_to_updateTaskFragment,
                     bundle
                 )
+            }
+
+            override fun onCheckBoxClick(task: Task) {
+                displayTasksViewModel.updateTask(task)
             }
 
         })

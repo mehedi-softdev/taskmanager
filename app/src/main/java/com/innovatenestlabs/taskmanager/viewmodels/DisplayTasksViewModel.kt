@@ -14,11 +14,18 @@ import javax.inject.Inject
 class DisplayTasksViewModel @Inject constructor(private val taskRepository: TaskRepository) :
     ViewModel() {
     val taskListResponse: LiveData<Response<List<Task>>> get() = taskRepository.taskListResponse
+    val taskResponse: LiveData<Response<Task>> get() = taskRepository.taskResponse
 
 
     fun loadTaskList() {
         viewModelScope.launch {
             taskRepository.getTaskList()
+        }
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(task)
         }
     }
 }

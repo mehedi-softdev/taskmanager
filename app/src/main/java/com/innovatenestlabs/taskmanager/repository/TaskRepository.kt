@@ -51,7 +51,6 @@ class TaskRepository @Inject constructor(private val taskDatabase: TaskDatabase)
     suspend fun updateTask(task: Task) {
         _taskResponse.postValue(Response.Loading())
         try {
-            println("Updated")
             taskDatabase.getTaskDao().updateTask(task)
             _taskResponse.postValue(Response.Success(data = task))
         } catch (e: Exception) {

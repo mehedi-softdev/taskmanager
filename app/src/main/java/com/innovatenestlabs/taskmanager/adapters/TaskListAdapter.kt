@@ -17,6 +17,7 @@ class TaskListAdapter :
     interface OnItemClickListener {
         // direct pass the meter object
         fun onItemClick(task: Task)
+        fun onCheckBoxClick(task: Task)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
@@ -40,6 +41,17 @@ class TaskListAdapter :
             binding.cbIsComplete.isChecked = task.isComplete // if true then checked else unchecked
             binding.root.setOnClickListener {
                 listener.onItemClick(task)
+            }
+            binding.cbIsComplete.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked) {
+                    task.isComplete = true
+                    binding.taskStatus.text = taskStatusContainer[task.isComplete]
+                    listener.onCheckBoxClick(task)
+                }else {
+                    task.isComplete = false
+                    binding.taskStatus.text = taskStatusContainer[task.isComplete]
+                    listener.onCheckBoxClick(task)
+                }
             }
         }
     }
