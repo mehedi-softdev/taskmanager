@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
+import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.Response
 import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,8 +38,6 @@ class DisplayFragment : Fragment() {
         setupRecyclerView()
         bindingEvents()
         bindingObservers()
-        // call the loading function of tasks
-        displayTasksViewModel.loadTaskList()
     }
 
     private fun bindingObservers() {
@@ -49,12 +49,9 @@ class DisplayFragment : Fragment() {
                 }
 
                 is Response.Success -> {
-                    it.data?.let { tasks ->
-                        if (tasks.isNotEmpty()) {
-                            // change the default text of label
-                            binding.tvLabel.text = getString(R.string.your_tasks);
-                            taskListAdapter.submitList(tasks)
-                        }
+                    if (it.data?.isNotEmpty() == true) {
+                        binding.tvLabel.text = getString(R.string.your_tasks)
+                        taskListAdapter.submitList(it.data)
                     }
 
                 }
@@ -78,6 +75,17 @@ class DisplayFragment : Fragment() {
         binding.rvTaskList.setHasFixedSize(true)
         // now set the adapter
         binding.rvTaskList.adapter = taskListAdapter
+        // call the loading function of tasks
+        displayTasksViewModel.loadTaskList()
+        taskListAdapter.setOnItemClickListener(object : TaskListAdapter.OnItemClickListener {
+            override fun onItemClick(task: Task) {
+                // later: action for update
+                Toast.makeText(
+                    requireContext(), "Task id: ${task.id}", Toast.LENGTH_SHORT
+                ).show()
+            }
+
+        })
     }
 
     override fun onDestroyView() {
