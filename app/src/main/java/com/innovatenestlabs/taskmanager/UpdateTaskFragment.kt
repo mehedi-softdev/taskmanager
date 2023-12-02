@@ -8,14 +8,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.innovatenestlabs.taskmanager.databinding.FragmentUpdateTaskBinding
 import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.AppConverters
+import com.innovatenestlabs.taskmanager.utils.Response
 import com.innovatenestlabs.taskmanager.viewmodels.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
-import java.util.Date
 
 @AndroidEntryPoint
 class UpdateTaskFragment : Fragment() {
@@ -37,6 +40,31 @@ class UpdateTaskFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initialize()
         bindingEvents()
+        bindingObservers()
+    }
+
+    private fun bindingObservers() {
+        taskViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
+            binding.progressBar.visibility = View.GONE
+            when (it) {
+                is Response.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.tvErrorMessage.visibility =
+                        View.GONE // no need to show message in loading time
+                }
+
+                is Response.Success -> {
+                    Toast.makeText(requireContext(), "Task added successfully!", Toast.LENGTH_SHORT)
+                        .show()
+                    findNavController().popBackStack() // reversing the view
+                }
+
+                is Response.Error -> {
+                    binding.tvErrorMessage.visibility = View.VISIBLE
+                    binding.tvErrorMessage.text = it.message.toString()
+                }
+            }
+        })
     }
 
     private fun initialize() {
@@ -53,12 +81,12 @@ class UpdateTaskFragment : Fragment() {
                 taskViewModel.insertTask(getTask())
             } else {
                 binding.tvErrorMessage.visibility = View.VISIBLE
-                binding.tvErrorMessage.setTextColor(Color.RED)
                 // show the error message
                 binding.tvErrorMessage.text = validate.second
             }
         }
     }
+
 
     private fun btnDateTimePickerEvent() {
         val currentYear = selectDateTime.get(Calendar.YEAR)
@@ -99,7 +127,7 @@ class UpdateTaskFragment : Fragment() {
     }
 
     // fun for validate user input
-    fun validateUserInput(): Pair<Boolean, String> {
+    private fun validateUserInput(): Pair<Boolean, String> {
         val task = getTask()
         return taskViewModel.validateTaskInput(task)
     }

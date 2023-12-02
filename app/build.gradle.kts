@@ -72,21 +72,10 @@ dependencies {
     // pin view
     implementation("io.github.chaosleung:pinview:1.4.4")
 
-    // firebase (ignoring warning)
-    implementation("com.google.firebase:firebase-database-ktx:20.2.2")
-    implementation("com.google.firebase:firebase-auth-ktx:19.3.2")
-    implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
-    implementation("com.google.firebase:firebase-messaging:23.0.0")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
     // coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-
-    // swipe refresh
-    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-
+    
     // splash screen
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
