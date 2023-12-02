@@ -1,12 +1,14 @@
 package com.innovatenestlabs.taskmanager
 
 import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
+import com.innovatenestlabs.taskmanager.alarms.TaskAlarmScheduler
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
 import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.Constants.ACTION_COMMAND
@@ -26,6 +29,7 @@ import com.innovatenestlabs.taskmanager.utils.SwipeToDeleteCallBack
 import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DisplayFragment : Fragment() {
@@ -34,6 +38,8 @@ class DisplayFragment : Fragment() {
     private lateinit var taskListAdapter: TaskListAdapter
     private val displayTasksViewModel by viewModels<DisplayTasksViewModel>()
     private val taskList = mutableListOf<Task>()
+    @Inject
+    lateinit var taskAlarmScheduler: TaskAlarmScheduler
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -134,12 +140,20 @@ class DisplayFragment : Fragment() {
                 )
             }
 
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun onCheckBoxClick(task: Task) {
+                // if task is complete then alarm should cancel else reset
+                if(task.isComplete) {
+                    taskAlarmScheduler.cancel(task)
+                }else {
+                    taskAlarmScheduler.schedule(task)
+                }
                 displayTasksViewModel.updateTask(task)
             }
 
         })
         val swipeToDeleteCallBack = object : SwipeToDeleteCallBack() {
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 removeItem(position)
@@ -149,11 +163,14 @@ class DisplayFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.rvTaskList)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun removeItem(position: Int) {
         val _task = taskList[position]
         displayTasksViewModel.removeTask(_task)
         taskList.removeAt(position)
-        if(taskList.isEmpty()) {
+        // now cancel the alarm as well
+        taskAlarmScheduler.cancel(_task)
+        if (taskList.isEmpty()) {
             // update label as well
             binding.tvLabel.text = getString(R.string.no_task_message)
         }

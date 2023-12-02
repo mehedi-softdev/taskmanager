@@ -2,15 +2,18 @@ package com.innovatenestlabs.taskmanager
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.innovatenestlabs.taskmanager.alarms.TaskAlarmScheduler
 import com.innovatenestlabs.taskmanager.databinding.FragmentTaskAddOrUpdateBinding
 import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.AppConverters
@@ -22,6 +25,7 @@ import com.innovatenestlabs.taskmanager.utils.Response
 import com.innovatenestlabs.taskmanager.viewmodels.TaskAddOrUpdateViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TaskAddOrUpdateFragment : Fragment() {
@@ -33,6 +37,8 @@ class TaskAddOrUpdateFragment : Fragment() {
     private var actionCommand: String? = null
     private var task: Task? = null
 
+    @Inject
+    lateinit var taskAlarmScheduler: TaskAlarmScheduler
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +48,7 @@ class TaskAddOrUpdateFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         actionCommand = arguments?.getString(ACTION_COMMAND)
@@ -64,6 +71,7 @@ class TaskAddOrUpdateFragment : Fragment() {
         bindingObservers()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun bindingObservers() {
         // this live data used on adding or updating
         taskAddOrUpdateViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
@@ -76,8 +84,8 @@ class TaskAddOrUpdateFragment : Fragment() {
                 }
 
                 is Response.Success -> {
-                    actionCommand?.let {
-                        if (it == UPDATE_COMMAND) {
+                    actionCommand?.let { action ->
+                        if (action == UPDATE_COMMAND) {
                             Toast.makeText(
                                 requireContext(),
                                 "Task updated successfully!",
@@ -92,6 +100,8 @@ class TaskAddOrUpdateFragment : Fragment() {
                             )
                                 .show()
                         }
+                        // now set the alarm
+                        taskAlarmScheduler.schedule(it.data!!)
                         findNavController().popBackStack() // reversing the view
                     }
 
@@ -145,11 +155,11 @@ class TaskAddOrUpdateFragment : Fragment() {
             val validate = validateUserInput()
             if (validate.first) {
                 actionCommand?.let {
-                    if(it == UPDATE_COMMAND) {
+                    if (it == UPDATE_COMMAND) {
                         task?.let { t ->
                             taskAddOrUpdateViewModel.updateTask(t)
                         }
-                    }else if(it == ADD_COMMAND) {
+                    } else if (it == ADD_COMMAND) {
                         taskAddOrUpdateViewModel.insertTask(getTask())
                     } else {
                         // do nothing
@@ -209,13 +219,13 @@ class TaskAddOrUpdateFragment : Fragment() {
     }
 
     private fun getTask(): Task {
-        if (actionCommand!= null && actionCommand == UPDATE_COMMAND) {
+        if (actionCommand != null && actionCommand == UPDATE_COMMAND) {
             this.task?.name = binding.etTaskName.text.toString()
             this.task?.desc = binding.etTaskDesc.text.toString()
             // reassign date also because user can update their date picker data
             this.task?.date = selectDateTime.time
             return this.task!!
-        }else {
+        } else {
             val task = Task(
                 0, binding.etTaskName.text.toString(),
                 binding.etTaskDesc.text.toString(),
