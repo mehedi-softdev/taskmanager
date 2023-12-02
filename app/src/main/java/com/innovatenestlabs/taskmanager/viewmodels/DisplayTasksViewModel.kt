@@ -28,4 +28,10 @@ class DisplayTasksViewModel @Inject constructor(private val taskRepository: Task
             taskRepository.updateTask(task)
         }
     }
+
+    fun removeTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.removeTask(task)
+        }
+    }
 }

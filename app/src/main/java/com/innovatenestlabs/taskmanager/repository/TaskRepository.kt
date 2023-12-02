@@ -57,4 +57,12 @@ class TaskRepository @Inject constructor(private val taskDatabase: TaskDatabase)
             _taskResponse.postValue(Response.Error(e.message.toString()))
         }
     }
+
+    suspend fun removeTask(task: Task) {
+        try {
+            taskDatabase.getTaskDao().deleteTask(task)
+        }catch (e: Exception) {
+            _taskResponse.postValue(Response.Error(e.message.toString()))
+        }
+    }
 }

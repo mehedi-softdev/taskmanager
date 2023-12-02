@@ -1,5 +1,6 @@
 package com.innovatenestlabs.taskmanager
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,8 +10,10 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
 import com.innovatenestlabs.taskmanager.models.Task
@@ -19,6 +22,7 @@ import com.innovatenestlabs.taskmanager.utils.Constants.ADD_COMMAND
 import com.innovatenestlabs.taskmanager.utils.Constants.TASK_ID
 import com.innovatenestlabs.taskmanager.utils.Constants.UPDATE_COMMAND
 import com.innovatenestlabs.taskmanager.utils.Response
+import com.innovatenestlabs.taskmanager.utils.SwipeToDeleteCallBack
 import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -83,13 +87,14 @@ class DisplayFragment : Fragment() {
             }
         })
         displayTasksViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
-            when(it) {
+            when (it) {
                 is Response.Loading -> {}
                 is Response.Success -> {
                     taskList.clear()
                     // just call the load task method
                     displayTasksViewModel.loadTaskList()
                 }
+
                 is Response.Error -> {}
             }
         })
@@ -109,7 +114,9 @@ class DisplayFragment : Fragment() {
 
     private fun setupRecyclerView() {
         taskListAdapter = TaskListAdapter()
-        binding.rvTaskList.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTaskList.layoutManager = LinearLayoutManager(
+            requireContext()
+        )
         binding.rvTaskList.setHasFixedSize(true)
         // now set the list and adapter
         taskListAdapter.submitList(taskList)
@@ -132,6 +139,25 @@ class DisplayFragment : Fragment() {
             }
 
         })
+        val swipeToDeleteCallBack = object : SwipeToDeleteCallBack() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                removeItem(position)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallBack)
+        itemTouchHelper.attachToRecyclerView(binding.rvTaskList)
+    }
+
+    private fun removeItem(position: Int) {
+        val _task = taskList[position]
+        displayTasksViewModel.removeTask(_task)
+        taskList.removeAt(position)
+        if(taskList.isEmpty()) {
+            // update label as well
+            binding.tvLabel.text = getString(R.string.no_task_message)
+        }
+        binding.rvTaskList.adapter?.notifyItemRemoved(position)
     }
 
     override fun onDestroyView() {
