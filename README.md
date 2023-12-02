@@ -16,17 +16,30 @@
             <td style="border: 1px solid red;padding:4px;">Architecture Followed</td>
             <td style="border: 1px solid red;padding:4px;">MVVM</td>
         </tr>
+               <tr>
+            <td style="border: 1px solid red;padding:4px;">Principle tried to follow: </td>
+            <td style="border: 1px solid red;padding:4px;">SOLID</td>
+        </tr>
     </table>
 <hr>
 <p>
-    This project is made in order to complete assignment on making Task manager app with alarm remainder feature for ITmedicus.
+    I make this project as an assignment given to me by ITmedicus solutions to proof my ability.
 </p>
 <p>
-    To make this project I followed MVVM architecture which one is very easy to manage and hassle free for code reusability rather than other architecture like MVP or MVC.
+    To make this project I followed MVVM architecture which one is very easy to manage and hassle free for code reusability rather than other architecture like MVP or MVC. 
+    I have tried my best to follow clean code style and making code reusuable. 
     <br>
-   <b> In building the project</b>, the challenge was time picking after date picker. Firstly I thought how can I combine both and use in one variable. Then I read on Date() object which one is already familiar for me. I found their is a Calender instance also availabe which ones can be converted to Date() object as well. So I used Calender.getInstance() for combining both.
+   <b> In building this project</b>, I have faced two types of challenges. They are described below: <br> 
+    The first challenge was time picking after date picker. Firstly I thought how can I combine both and use in one variable. Then I read on Date() object which one is already familiar for me.
+    Then I used the Date() object that can be generated from calender instance. And I set my variable type as Date. 
+    <pre>
+        selectDateTime = Calendar.getInstance()
+        // and the below code returns Date() object
+        selectDateTime.time
+    </pre>
     <br>
-    Another challenge I faced when adding alarm trigger function. But some blog post like medium and youtube channel help me to get out the problem. The broadcast reciever solve my problem. 
+    Second challenge was setting alarm. But google documentation and youtube video helps me to solve the problem. After reading and watching I used the BroadcastReceiver() for alarm handling after trigger and set Notification to notify user about their due tasks. If user click on notification they will redirect to MainActivity where DisplayFragment is set to home on nav graph. I mean user find the tasks list.<br>
+    For triggering alarm, I used AlarmManager on my AlarmSchedular class. 
      <br>
 </p>
 <p>
