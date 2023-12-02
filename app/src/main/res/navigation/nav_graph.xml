@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/updateTaskFragment"
-        android:name="com.innovatenestlabs.taskmanager.UpdateTaskFragment"
+        android:name="com.innovatenestlabs.taskmanager.TaskAddOrUpdateFragment"
         android:label="fragment_update_task"
-        tools:layout="@layout/fragment_update_task" />
+        tools:layout="@layout/fragment_task_add_or_update" />
 </navigation>

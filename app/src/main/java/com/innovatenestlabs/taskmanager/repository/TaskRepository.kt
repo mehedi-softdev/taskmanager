@@ -14,6 +14,10 @@ class TaskRepository @Inject constructor(private val taskDatabase: TaskDatabase)
     private var _taskListResponse: MutableLiveData<Response<List<Task>>> = MutableLiveData()
     val taskListResponse: LiveData<Response<List<Task>>> get() = _taskListResponse
 
+    private var _task: MutableLiveData<Response<Task>> = MutableLiveData()
+    val task: LiveData<Response<Task>> get() = _task
+
+
     suspend fun insertTask(task: Task) {
         _taskResponse.postValue(Response.Loading())
         try {
@@ -31,6 +35,27 @@ class TaskRepository @Inject constructor(private val taskDatabase: TaskDatabase)
             _taskListResponse.postValue(Response.Success(data = listOfTasks))
         } catch (e: Exception) {
             _taskListResponse.postValue(Response.Error(e.message.toString()))
+        }
+    }
+
+    suspend fun getTaskById(taskId: Int) {
+        _task.postValue(Response.Loading())
+        try {
+            val task = taskDatabase.getTaskDao().getTaskById(taskId)
+            _task.postValue(Response.Success(data = task))
+        }catch (e: Exception) {
+            _task.postValue(Response.Error(e.message.toString()))
+        }
+    }
+
+    suspend fun updateTask(task: Task) {
+        _taskResponse.postValue(Response.Loading())
+        try {
+            println("Updated")
+            taskDatabase.getTaskDao().updateTask(task)
+            _taskResponse.postValue(Response.Success(data = task))
+        } catch (e: Exception) {
+            _taskResponse.postValue(Response.Error(e.message.toString()))
         }
     }
 }

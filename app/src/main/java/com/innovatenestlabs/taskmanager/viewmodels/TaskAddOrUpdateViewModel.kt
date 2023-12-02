@@ -12,8 +12,9 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class AddTaskViewModel @Inject constructor(private val taskRepository: TaskRepository) : ViewModel() {
+class TaskAddOrUpdateViewModel @Inject constructor(private val taskRepository: TaskRepository) : ViewModel() {
     val taskResponse: LiveData<Response<Task>> get() = taskRepository.taskResponse
+    val task: LiveData<Response<Task>> get() = taskRepository.task
 
     fun insertTask(task: Task) {
         viewModelScope.launch {
@@ -33,5 +34,18 @@ class AddTaskViewModel @Inject constructor(private val taskRepository: TaskRepos
             result = Pair(false, "Pick a valid Date Time")
         }
         return result
+    }
+
+    // for update action
+    fun getTaskById(taskId: Int) {
+        viewModelScope.launch {
+            taskRepository.getTaskById(taskId)
+        }
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(task)
+        }
     }
 }

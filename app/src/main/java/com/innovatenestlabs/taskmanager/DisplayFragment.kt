@@ -14,6 +14,10 @@ import androidx.recyclerview.widget.ListAdapter
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
 import com.innovatenestlabs.taskmanager.models.Task
+import com.innovatenestlabs.taskmanager.utils.Constants.ACTION_COMMAND
+import com.innovatenestlabs.taskmanager.utils.Constants.ADD_COMMAND
+import com.innovatenestlabs.taskmanager.utils.Constants.TASK_ID
+import com.innovatenestlabs.taskmanager.utils.Constants.UPDATE_COMMAND
 import com.innovatenestlabs.taskmanager.utils.Response
 import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +52,12 @@ class DisplayFragment : Fragment() {
         displayTasksViewModel.loadTaskList()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // for clearing existing data
+        taskList.clear()
+    }
+
     private fun bindingObservers() {
         displayTasksViewModel.taskListResponse.observe(viewLifecycleOwner, Observer {
             binding.progressBar.visibility = View.GONE
@@ -58,10 +68,12 @@ class DisplayFragment : Fragment() {
 
                 is Response.Success -> {
                     it.data?.let { tasks ->
-                        binding.rvTaskList.visibility = View.VISIBLE
-                        binding.tvLabel.text = getString(R.string.your_tasks)
-                        taskList.clear()
-                        taskList.addAll(tasks)
+                        if (tasks.isNotEmpty()) {
+                            binding.rvTaskList.visibility = View.VISIBLE
+                            binding.tvLabel.text = getString(R.string.your_tasks)
+                            taskList.clear()
+                            taskList.addAll(tasks)
+                        }
                     }
 
                 }
@@ -75,7 +87,11 @@ class DisplayFragment : Fragment() {
 
     private fun bindingEvents() {
         binding.fabAddTask.setOnClickListener {
-            findNavController().navigate(R.id.action_displayFragment_to_updateTaskFragment)
+            val bundle = Bundle().apply { putString(ACTION_COMMAND, ADD_COMMAND) }
+            findNavController().navigate(
+                R.id.action_displayFragment_to_updateTaskFragment,
+                bundle
+            )
         }
     }
 
@@ -83,15 +99,20 @@ class DisplayFragment : Fragment() {
         taskListAdapter = TaskListAdapter()
         binding.rvTaskList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTaskList.setHasFixedSize(true)
-        // now set the adapter
+        // now set the list and adapter
         taskListAdapter.submitList(taskList)
         binding.rvTaskList.adapter = taskListAdapter
         taskListAdapter.setOnItemClickListener(object : TaskListAdapter.OnItemClickListener {
             override fun onItemClick(task: Task) {
-                // later: action for update
-                Toast.makeText(
-                    requireContext(), "Task id: ${task.id}", Toast.LENGTH_SHORT
-                ).show()
+                val bundle = Bundle()
+                bundle.putInt(TASK_ID, task.id)
+                // for adding / editing same fragment used
+                // so the command key used which command it has to perform
+                bundle.putString(ACTION_COMMAND, UPDATE_COMMAND)
+                findNavController().navigate(
+                    R.id.action_displayFragment_to_updateTaskFragment,
+                    bundle
+                )
             }
 
         })

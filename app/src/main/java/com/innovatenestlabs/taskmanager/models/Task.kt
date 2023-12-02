@@ -11,5 +11,5 @@ data class Task(
     var name: String,
     var desc: String,
     var date: Date,
-    var isComplete: Boolean
+    var isComplete: Boolean = false
 )
