@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class DatabaseModule {
+class DatabaseModule  {
     @Singleton
     @Provides
     fun providesTaskDatabase(@ApplicationContext context: Context): TaskDatabase {
