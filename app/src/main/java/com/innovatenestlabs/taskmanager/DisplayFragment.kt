@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.innovatenestlabs.taskmanager.adapters.TaskListAdapter
 import com.innovatenestlabs.taskmanager.databinding.FragmentDisplayBinding
+import com.innovatenestlabs.taskmanager.utils.Response
+import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,6 +21,7 @@ class DisplayFragment : Fragment() {
     private var _binding: FragmentDisplayBinding? = null
     private val binding get() = _binding!!
     private lateinit var taskListAdapter: TaskListAdapter
+    private val displayTasksViewModel by viewModels<DisplayTasksViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +35,35 @@ class DisplayFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         bindingEvents()
+        bindingObservers()
+        // call the loading function of tasks
+        displayTasksViewModel.loadTaskList()
+    }
+
+    private fun bindingObservers() {
+        displayTasksViewModel.taskListResponse.observe(viewLifecycleOwner, Observer {
+            binding.progressBar.visibility = View.GONE
+            when (it) {
+                is Response.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                is Response.Success -> {
+                    it.data?.let { tasks ->
+                        if (tasks.isNotEmpty()) {
+                            // change the default text of label
+                            binding.tvLabel.text = getString(R.string.your_tasks);
+                            taskListAdapter.submitList(tasks)
+                        }
+                    }
+
+                }
+
+                is Response.Error -> {
+
+                }
+            }
+        })
     }
 
     private fun bindingEvents() {
@@ -39,9 +73,9 @@ class DisplayFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        taskListAdapter = TaskListAdapter()
         binding.rvTaskList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTaskList.setHasFixedSize(true)
-        taskListAdapter = TaskListAdapter()
         // now set the adapter
         binding.rvTaskList.adapter = taskListAdapter
     }

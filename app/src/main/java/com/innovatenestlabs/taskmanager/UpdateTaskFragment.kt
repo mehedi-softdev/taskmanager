@@ -2,7 +2,6 @@ package com.innovatenestlabs.taskmanager
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +15,7 @@ import com.innovatenestlabs.taskmanager.databinding.FragmentUpdateTaskBinding
 import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.AppConverters
 import com.innovatenestlabs.taskmanager.utils.Response
-import com.innovatenestlabs.taskmanager.viewmodels.TaskViewModel
+import com.innovatenestlabs.taskmanager.viewmodels.AddTaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -26,7 +25,7 @@ class UpdateTaskFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var selectDateTime: Calendar
 
-    private val taskViewModel by viewModels<TaskViewModel>()
+    private val addTaskViewModel by viewModels<AddTaskViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +43,7 @@ class UpdateTaskFragment : Fragment() {
     }
 
     private fun bindingObservers() {
-        taskViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
+        addTaskViewModel.taskResponse.observe(viewLifecycleOwner, Observer {
             binding.progressBar.visibility = View.GONE
             when (it) {
                 is Response.Loading -> {
@@ -78,7 +77,7 @@ class UpdateTaskFragment : Fragment() {
         binding.btnSaveTask.setOnClickListener {
             val validate = validateUserInput()
             if (validate.first) {
-                taskViewModel.insertTask(getTask())
+                addTaskViewModel.insertTask(getTask())
             } else {
                 binding.tvErrorMessage.visibility = View.VISIBLE
                 // show the error message
@@ -129,7 +128,7 @@ class UpdateTaskFragment : Fragment() {
     // fun for validate user input
     private fun validateUserInput(): Pair<Boolean, String> {
         val task = getTask()
-        return taskViewModel.validateTaskInput(task)
+        return addTaskViewModel.validateTaskInput(task)
     }
 
     private fun getTask(): Task {

@@ -10,4 +10,5 @@
     <string name="todo">TODO</string>
     <string name="task_name">Task Name</string>
     <string name="task_status">Status: InComplete</string>
+    <string name="your_tasks">Your tasks</string>
 </resources>

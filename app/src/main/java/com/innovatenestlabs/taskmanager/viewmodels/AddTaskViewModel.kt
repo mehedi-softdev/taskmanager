@@ -12,7 +12,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class TaskViewModel @Inject constructor(private val taskRepository: TaskRepository) : ViewModel() {
+class AddTaskViewModel @Inject constructor(private val taskRepository: TaskRepository) : ViewModel() {
     val taskResponse: LiveData<Response<Task>> get() = taskRepository.taskResponse
 
     fun insertTask(task: Task) {
