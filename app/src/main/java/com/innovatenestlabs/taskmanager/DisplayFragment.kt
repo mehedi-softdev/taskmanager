@@ -17,6 +17,7 @@ import com.innovatenestlabs.taskmanager.models.Task
 import com.innovatenestlabs.taskmanager.utils.Response
 import com.innovatenestlabs.taskmanager.viewmodels.DisplayTasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Date
 
 @AndroidEntryPoint
 class DisplayFragment : Fragment() {
@@ -24,6 +25,7 @@ class DisplayFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var taskListAdapter: TaskListAdapter
     private val displayTasksViewModel by viewModels<DisplayTasksViewModel>()
+    private val taskList = mutableListOf<Task>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +42,12 @@ class DisplayFragment : Fragment() {
         bindingObservers()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // call the loading function of tasks
+        displayTasksViewModel.loadTaskList()
+    }
+
     private fun bindingObservers() {
         displayTasksViewModel.taskListResponse.observe(viewLifecycleOwner, Observer {
             binding.progressBar.visibility = View.GONE
@@ -49,9 +57,11 @@ class DisplayFragment : Fragment() {
                 }
 
                 is Response.Success -> {
-                    if (it.data?.isNotEmpty() == true) {
+                    it.data?.let { tasks ->
+                        binding.rvTaskList.visibility = View.VISIBLE
                         binding.tvLabel.text = getString(R.string.your_tasks)
-                        taskListAdapter.submitList(it.data)
+                        taskList.clear()
+                        taskList.addAll(tasks)
                     }
 
                 }
@@ -74,9 +84,8 @@ class DisplayFragment : Fragment() {
         binding.rvTaskList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTaskList.setHasFixedSize(true)
         // now set the adapter
+        taskListAdapter.submitList(taskList)
         binding.rvTaskList.adapter = taskListAdapter
-        // call the loading function of tasks
-        displayTasksViewModel.loadTaskList()
         taskListAdapter.setOnItemClickListener(object : TaskListAdapter.OnItemClickListener {
             override fun onItemClick(task: Task) {
                 // later: action for update
