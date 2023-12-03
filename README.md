@@ -46,5 +46,5 @@
     <strong>Working: </strong> App has two screens, one for displaying list of tasks. and another one is for adding and updating task. I used fragment. Because this app should be single activity project.
     App trigger an alarm when due time has come and user haven't completed his task. Here Notification is set for alarming the user for his pending task. 
     <br>
-    <b>Note: </b>This app will not trigger alarm in due date when user already completed his task. 
+    <b>Note: </b>This app will not trigger alarm in due date when user already completed his task. And For deleting "You have to swap the list view item".
 </p>
